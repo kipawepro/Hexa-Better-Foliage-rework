@@ -67,8 +67,10 @@ jobs:
           name: BetterFoliageRenewed ${{ steps.version.outputs.result }}
           version: ${{ steps.version.outputs.result }}
           version-type: ${{ steps.version_type.outputs.result }}
-          java: 17
+          java: 21
           loaders: |
             neoforge
+          game-versions: |
+            1.21
 
           changelog-file: CHANGELOG.md
