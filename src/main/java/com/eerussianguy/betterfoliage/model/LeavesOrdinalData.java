@@ -4,9 +4,8 @@ import java.util.Random;
 
 import net.minecraft.core.BlockPos;
 
-import net.minecraftforge.client.model.data.ModelProperty;
-
 import com.eerussianguy.betterfoliage.BFConfig;
+import net.neoforged.neoforge.client.model.data.ModelProperty;
 
 public class LeavesOrdinalData
 {

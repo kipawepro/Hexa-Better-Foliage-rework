@@ -1,7 +1,5 @@
 package com.eerussianguy.betterfoliage;
 
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -14,7 +12,6 @@ import net.minecraft.client.renderer.block.model.*;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BlockModelRotation;
-import net.minecraft.client.resources.model.Material;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.client.resources.model.SimpleBakedModel;
 import net.minecraft.core.BlockPos;
@@ -27,34 +24,40 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import com.eerussianguy.betterfoliage.particle.SpritePicker;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraftforge.client.model.ForgeFaceData;
+import net.neoforged.neoforge.client.model.ExtraFaceData;
+import org.apache.commons.lang3.mutable.MutableObject;
 
 import static com.eerussianguy.betterfoliage.BetterFoliage.MOD_ID;
 
 public class Helpers
 {
     public static final Direction[] DIRECTIONS = Direction.values();
-    public static final ModelResourceLocation BACKING_DIRT_MODEL = new ModelResourceLocation("minecraft", "dirt", "inventory");
+    public static final ModelResourceLocation BACKING_DIRT_MODEL = ModelResourceLocation.inventory(ResourceLocation.fromNamespaceAndPath("minecraft", "dirt"));
 
     public static ResourceLocation identifier(String name)
     {
-        return new ResourceLocation(MOD_ID, name);
+        return ResourceLocation.fromNamespaceAndPath(MOD_ID, name);
+    }
+
+    public static ModelResourceLocation standalone(String name)
+    {
+        return ModelResourceLocation.standalone(identifier(name));
     }
 
     public static final ResourceLocation EMPTY = identifier("empty");
 
     public static final BlockFaceUV UV_DEFAULT = new BlockFaceUV(new float[] {0f, 0f, 16f, 16f}, 0);
 
-    public static ForgeFaceData forgeFace(boolean ao)
+    public static ExtraFaceData forgeFace(boolean ao)
     {
         return ao ?
-            new ForgeFaceData(0xFFFFFFFF, 0, 0, true)
-            : new ForgeFaceData(0xFFFFFFFF, 0, 0, false);
+            new ExtraFaceData(0xFFFFFFFF, 0, 0, true)
+            : new ExtraFaceData(0xFFFFFFFF, 0, 0, false);
     }
 
     public static BlockElementFace makeTintedFace(BlockFaceUV uv, boolean ao)
     {
-        return new BlockElementFace(null, 0, "", uv, forgeFace(ao));
+        return new BlockElementFace(null, 0, "", uv, forgeFace(ao), new MutableObject<>());
     }
 
     public static BlockElementFace makeTintedFace(BlockFaceUV uv)
@@ -64,7 +67,7 @@ public class Helpers
 
     public static BlockElementFace makeFace(BlockFaceUV uv, boolean ao)
     {
-        return new BlockElementFace(null, -1, "", uv, forgeFace(ao));
+        return new BlockElementFace(null, -1, "", uv, forgeFace(ao), new MutableObject<>());
     }
 
     public static BlockElementFace makeFace(BlockFaceUV uv)
@@ -74,41 +77,35 @@ public class Helpers
 
     public static ResourceLocation requireID(JsonObject json, String member)
     {
-        return new ResourceLocation(GsonHelper.getAsString(json, member, EMPTY.toString()));
+        return ResourceLocation.parse(GsonHelper.getAsString(json, member, EMPTY.toString()));
     }
 
     public static ResourceLocation identifierOrEmpty(JsonObject json, String member)
     {
         if (!json.has(member)) return EMPTY;
-        return new ResourceLocation(json.get(member).getAsString());
+        return ResourceLocation.parse(json.get(member).getAsString());
     }
 
-    public static Collection<Material> makeMaterials(ResourceLocation... textures)
+    public static BakedQuad makeBakedQuad(BlockElement BlockElement, BlockElementFace partFace, TextureAtlasSprite atlasSprite, Direction dir, BlockModelRotation modelRotation)
     {
-        //noinspection deprecation
-        return Arrays.stream(textures).map(texture -> new Material(TextureAtlas.LOCATION_BLOCKS, texture)).toList();
+        return new FaceBakery().bakeQuad(BlockElement.from, BlockElement.to, partFace, atlasSprite, dir, modelRotation, BlockElement.rotation, true);
     }
 
-    public static BakedQuad makeBakedQuad(BlockElement BlockElement, BlockElementFace partFace, TextureAtlasSprite atlasSprite, Direction dir, BlockModelRotation modelRotation, ResourceLocation modelResLoc)
-    {
-        return new FaceBakery().bakeQuad(BlockElement.from, BlockElement.to, partFace, atlasSprite, dir, modelRotation, BlockElement.rotation, true, modelResLoc);
-    }
-
-    public static void assembleFaces(SimpleBakedModel.Builder builder, BlockElement part, TextureAtlasSprite sprite, ResourceLocation modelLocation)
+    public static void assembleFaces(SimpleBakedModel.Builder builder, BlockElement part, TextureAtlasSprite sprite)
     {
         for (Map.Entry<Direction, BlockElementFace> e : part.faces.entrySet())
         {
             Direction d = e.getKey();
-            builder.addCulledFace(d, Helpers.makeBakedQuad(part, e.getValue(), sprite, d, BlockModelRotation.X0_Y0, modelLocation));
+            builder.addCulledFace(d, Helpers.makeBakedQuad(part, e.getValue(), sprite, d, BlockModelRotation.X0_Y0));
         }
     }
 
-    public static void assembleFacesConditional(SimpleBakedModel.Builder builder, BlockElement part, Function<Direction, TextureAtlasSprite> getter, ResourceLocation modelLocation)
+    public static void assembleFacesConditional(SimpleBakedModel.Builder builder, BlockElement part, Function<Direction, TextureAtlasSprite> getter)
     {
         for (Map.Entry<Direction, BlockElementFace> e : part.faces.entrySet())
         {
             Direction d = e.getKey();
-            builder.addCulledFace(d, Helpers.makeBakedQuad(part, e.getValue(), getter.apply(d), d, BlockModelRotation.X0_Y0, modelLocation));
+            builder.addCulledFace(d, Helpers.makeBakedQuad(part, e.getValue(), getter.apply(d), d, BlockModelRotation.X0_Y0));
         }
     }
 

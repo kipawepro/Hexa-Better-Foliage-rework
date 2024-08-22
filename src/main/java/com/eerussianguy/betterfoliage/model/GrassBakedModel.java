@@ -8,6 +8,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.*;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.client.resources.model.SimpleBakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -17,12 +18,12 @@ import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraftforge.client.ChunkRenderTypeSet;
-import net.minecraftforge.client.NamedRenderTypeManager;
-import net.minecraftforge.client.model.data.ModelData;
 
 import com.eerussianguy.betterfoliage.BFConfig;
 import com.eerussianguy.betterfoliage.Helpers;
+import net.neoforged.neoforge.client.ChunkRenderTypeSet;
+import net.neoforged.neoforge.client.NamedRenderTypeManager;
+import net.neoforged.neoforge.client.model.data.ModelData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
@@ -34,11 +35,10 @@ public class GrassBakedModel extends BFBakedModel
 
     private final BlockModel blockModel;
 
-    private final ResourceLocation modelLocation;
     private final ResourceLocation dirt;
     private final ResourceLocation top;
     private final ResourceLocation overlay;
-    private final ResourceLocation grass;
+    private final ModelResourceLocation grass;
     private final boolean tint;
 
     @Nullable private TextureAtlasSprite dirtTex;
@@ -47,16 +47,15 @@ public class GrassBakedModel extends BFBakedModel
 
     private final BakedModel[] models = new BakedModel[16];
 
-    public GrassBakedModel(ResourceLocation modelLocation, ResourceLocation dirt, ResourceLocation top, ResourceLocation overlay, boolean tint, ResourceLocation grass)
+    public GrassBakedModel(ResourceLocation dirt, ResourceLocation top, ResourceLocation overlay, boolean tint, ResourceLocation grass)
     {
         this.blockModel = new BlockModel(null, new ArrayList<>(), new HashMap<>(), false, BlockModel.GuiLight.FRONT, ItemTransforms.NO_TRANSFORMS, new ArrayList<>());
 
-        this.modelLocation = modelLocation;
         this.dirt = dirt;
         this.top = top;
         this.overlay = overlay;
         this.tint = tint;
-        this.grass = grass;
+        this.grass = ModelResourceLocation.standalone(grass);
 
         INSTANCES.add(this);
     }
@@ -97,9 +96,9 @@ public class GrassBakedModel extends BFBakedModel
             SimpleBakedModel.Builder builder = new SimpleBakedModel.Builder(blockModel, ItemOverrides.EMPTY, false).particle(topTex);
 
             final int fMeta = meta;
-            Helpers.assembleFacesConditional(builder, core, direction -> direction == Direction.UP ? topTex : dirtTex, modelLocation);
-            Helpers.assembleFacesConditional(builder, part, direction -> resolveTexture(direction, stateFromMeta(fMeta)), modelLocation);
-            models[meta] = builder.build(NamedRenderTypeManager.get(new ResourceLocation("cutout_mipped")));
+            Helpers.assembleFacesConditional(builder, core, direction -> direction == Direction.UP ? topTex : dirtTex);
+            Helpers.assembleFacesConditional(builder, part, direction -> resolveTexture(direction, stateFromMeta(fMeta)));
+            models[meta] = builder.build(NamedRenderTypeManager.get(ResourceLocation.parse("cutout_mipped")));
         }
     }
 
@@ -109,11 +108,11 @@ public class GrassBakedModel extends BFBakedModel
         return switch (d)
             {
                 case UP -> topTex;
-                default -> dirtTex;
                 case NORTH -> booleans[0] ? topTex : overlayTex;
                 case EAST -> booleans[1] ? topTex : overlayTex;
                 case SOUTH -> booleans[2] ? topTex : overlayTex;
                 case WEST -> booleans[3] ? topTex : overlayTex;
+                default -> dirtTex;
             };
     }
 
@@ -138,7 +137,7 @@ public class GrassBakedModel extends BFBakedModel
             {
                 final int meta = grassData.get();
                 List<BakedQuad> quads = new ArrayList<>(models[meta].getQuads(state, side, rand, extraData, renderType));
-                if (grassData.hasUp() && !grass.equals(Helpers.EMPTY) && rand.nextInt(BFConfig.CLIENT.extraGrassRarity.get()) == 0)
+                if (grassData.hasUp() && !grass.id().equals(Helpers.EMPTY) && rand.nextInt(BFConfig.CLIENT.extraGrassRarity.get()) == 0)
                 {
                     final BakedModel grassModel = Minecraft.getInstance().getModelManager().getModel(grass);
                     quads.addAll(grassModel.getQuads(state, side, rand, extraData, renderType));

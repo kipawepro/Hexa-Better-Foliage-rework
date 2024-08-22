@@ -1,6 +1,7 @@
 package com.eerussianguy.betterfoliage.model;
 
-import net.minecraftforge.client.model.data.ModelProperty;
+
+import net.neoforged.neoforge.client.model.data.ModelProperty;
 
 public class GrassConnectionData
 {

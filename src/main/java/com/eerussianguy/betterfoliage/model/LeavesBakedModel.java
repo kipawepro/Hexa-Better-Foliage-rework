@@ -14,12 +14,12 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.client.NamedRenderTypeManager;
-import net.minecraftforge.client.model.data.ModelData;
 
 import com.eerussianguy.betterfoliage.BFConfig;
 import com.eerussianguy.betterfoliage.Helpers;
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.neoforged.neoforge.client.NamedRenderTypeManager;
+import net.neoforged.neoforge.client.model.data.ModelData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
@@ -31,7 +31,6 @@ public class LeavesBakedModel extends BFBakedModel
     private final ResourceLocation leaves;
     private final ResourceLocation fluff;
     private final ResourceLocation overlay;
-    private final ResourceLocation modelLocation;
     private final boolean isOverlay;
     private final boolean tintOverlay;
     private final boolean tintLeaves;
@@ -45,11 +44,10 @@ public class LeavesBakedModel extends BFBakedModel
     @Nullable private BakedModel core;
     @Nullable private BakedModel outerCore;
 
-    public LeavesBakedModel(ResourceLocation modelLocation, ResourceLocation leaves, ResourceLocation fluff, ResourceLocation overlay, boolean tintLeaves, boolean tintOverlay)
+    public LeavesBakedModel(ResourceLocation leaves, ResourceLocation fluff, ResourceLocation overlay, boolean tintLeaves, boolean tintOverlay)
     {
         this.blockModel = new BlockModel(null, new ArrayList<>(), new HashMap<>(), false, BlockModel.GuiLight.FRONT, ItemTransforms.NO_TRANSFORMS, new ArrayList<>());
 
-        this.modelLocation = modelLocation;
         this.leaves = leaves;
         this.fluff = fluff;
         this.overlay = overlay;
@@ -112,10 +110,10 @@ public class LeavesBakedModel extends BFBakedModel
 
         assert leavesTex != null;
         SimpleBakedModel.Builder builder = new SimpleBakedModel.Builder(blockModel, ItemOverrides.EMPTY, false).particle(leavesTex);
-        Helpers.assembleFaces(builder, part, fluffTex, modelLocation);
-        Helpers.assembleFaces(builder, partR, fluffTex, modelLocation);
+        Helpers.assembleFaces(builder, part, fluffTex);
+        Helpers.assembleFaces(builder, partR, fluffTex);
 
-        crosses[ordinal] = builder.build(NamedRenderTypeManager.get(new ResourceLocation("cutout_mipped")));
+        crosses[ordinal] = builder.build(NamedRenderTypeManager.get(ResourceLocation.parse("cutout_mipped")));
     }
 
     private BlockElementRotation makeRotation(float degrees)
@@ -136,10 +134,10 @@ public class LeavesBakedModel extends BFBakedModel
         for (Map.Entry<Direction, BlockElementFace> e : part.faces.entrySet())
         {
             Direction d = e.getKey();
-            builder.addCulledFace(d, Helpers.makeBakedQuad(part, e.getValue(), tex, d, BlockModelRotation.X0_Y0, modelLocation));
+            builder.addCulledFace(d, Helpers.makeBakedQuad(part, e.getValue(), tex, d, BlockModelRotation.X0_Y0));
         }
 
-        return builder.build(NamedRenderTypeManager.get(new ResourceLocation("cutout_mipped")));
+        return builder.build(NamedRenderTypeManager.get(ResourceLocation.parse("cutout_mipped")));
     }
 
     @Override

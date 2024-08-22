@@ -2,31 +2,28 @@ package com.eerussianguy.betterfoliage;
 
 import java.util.function.Function;
 
-import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
-import net.minecraftforge.common.ForgeConfigSpec.Builder;
-import net.minecraftforge.common.ForgeConfigSpec.IntValue;
-import net.minecraftforge.common.ForgeConfigSpec.DoubleValue;
+import net.neoforged.neoforge.common.ModConfigSpec;
 
 import static com.eerussianguy.betterfoliage.BetterFoliage.MOD_ID;
 
 public class ClientConfig
 {
-    public final IntValue particleAttempts;
-    public final IntValue particleDistance;
+    public final ModConfigSpec.IntValue particleAttempts;
+    public final ModConfigSpec.IntValue particleDistance;
 
-    public final BooleanValue souls;
-    public final BooleanValue leaves;
-    public final BooleanValue snowballs;
+    public final ModConfigSpec.BooleanValue souls;
+    public final ModConfigSpec.BooleanValue leaves;
+    public final ModConfigSpec.BooleanValue snowballs;
 
-    public final IntValue leavesCacheSize;
-    public final DoubleValue leavesVariationDistance;
-    public final IntValue extraGrassRarity;
+    public final ModConfigSpec.IntValue leavesCacheSize;
+    public final ModConfigSpec.DoubleValue leavesVariationDistance;
+    public final ModConfigSpec.IntValue extraGrassRarity;
 
-    public final BooleanValue forceForgeLighting;
+    public final ModConfigSpec.BooleanValue forceForgeLighting;
 
-    ClientConfig(Builder innerBuilder)
+    ClientConfig(ModConfigSpec.Builder innerBuilder)
     {
-        Function<String, Builder> builder = name -> innerBuilder.translation(MOD_ID + ".config.server." + name);
+        Function<String, ModConfigSpec.Builder> builder = name -> innerBuilder.translation(MOD_ID + ".config.server." + name);
 
         innerBuilder.push("general");
 

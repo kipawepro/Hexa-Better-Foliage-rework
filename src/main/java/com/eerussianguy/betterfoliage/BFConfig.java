@@ -1,22 +1,17 @@
 package com.eerussianguy.betterfoliage;
 
-import java.util.function.Function;
-
+import net.neoforged.neoforge.common.ModConfigSpec;
 import org.apache.commons.lang3.tuple.Pair;
-import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.fml.config.ModConfig;
 
 public class BFConfig
 {
-    public static final ClientConfig CLIENT = register(ClientConfig::new);
+    public static final ClientConfig CLIENT;
+    public static final ModConfigSpec SPEC;
 
-    public static void init() {}
-
-    private static <C> C register(Function<ForgeConfigSpec.Builder, C> factory)
+    static
     {
-        Pair<C, ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(factory);
-        ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, specPair.getRight());
-        return specPair.getLeft();
+        final Pair<ClientConfig, ModConfigSpec> specPair = new ModConfigSpec.Builder().configure(ClientConfig::new);
+        CLIENT = specPair.getLeft();
+        SPEC = specPair.getRight();
     }
 }

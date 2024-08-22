@@ -7,9 +7,9 @@ import com.google.gson.JsonObject;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
-import net.minecraftforge.client.model.geometry.IGeometryLoader;
 
 import com.eerussianguy.betterfoliage.Helpers;
+import net.neoforged.neoforge.client.model.geometry.IGeometryLoader;
 
 
 @ParametersAreNonnullByDefault

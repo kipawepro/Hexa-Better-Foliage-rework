@@ -3,18 +3,17 @@ package com.eerussianguy.betterfoliage;
 import java.util.function.Supplier;
 
 import com.google.common.base.Suppliers;
-import net.minecraftforge.client.event.ModelEvent;
-import net.minecraftforge.client.event.TextureStitchEvent;
-import net.minecraftforge.common.ForgeConfig;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 import com.eerussianguy.betterfoliage.model.GrassBakedModel;
 import com.eerussianguy.betterfoliage.model.GrassLoader;
 import com.eerussianguy.betterfoliage.model.LeavesBakedModel;
 import com.eerussianguy.betterfoliage.model.LeavesLoader;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.ModList;
+import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
+import net.neoforged.neoforge.client.event.ModelEvent;
+import net.neoforged.neoforge.client.event.TextureAtlasStitchedEvent;
+import net.neoforged.neoforge.common.NeoForgeConfig;
 
 public class EventHandler
 {
@@ -31,10 +30,8 @@ public class EventHandler
         }
     });
 
-    public static void init()
+    public static void init(IEventBus bus)
     {
-        final IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
-
         bus.addListener(EventHandler::clientSetup);
         bus.addListener(EventHandler::onModelBake);
         bus.addListener(EventHandler::onModelRegister);
@@ -46,7 +43,7 @@ public class EventHandler
     {
         if (BFConfig.CLIENT.forceForgeLighting.get() && !OPTIFINE_LOADED.get() && !ModList.get().isLoaded("oculus"))
         {
-            ForgeConfig.CLIENT.experimentalForgeLightPipelineEnabled.set(true);
+            NeoForgeConfig.CLIENT.experimentalForgeLightPipelineEnabled.set(true);
         }
 
         if (ModList.get().isLoaded("tfc"))
@@ -61,21 +58,21 @@ public class EventHandler
         GrassBakedModel.INSTANCES.forEach(GrassBakedModel::init);
     }
 
-    private static void afterTextureStitch(final TextureStitchEvent.Post event)
+    private static void afterTextureStitch(final TextureAtlasStitchedEvent event)
     {
         ForgeEventHandler.clearCache();
     }
 
     private static void onLoaderRegister(final ModelEvent.RegisterGeometryLoaders event)
     {
-        event.register("leaves", new LeavesLoader());
-        event.register("grass", new GrassLoader());
+        event.register(Helpers.identifier("leaves"), new LeavesLoader());
+        event.register(Helpers.identifier("grass"), new GrassLoader());
     }
 
     private static void onModelRegister(final ModelEvent.RegisterAdditional event)
     {
-        event.register(Helpers.identifier("block/better_grass"));
-        event.register(Helpers.identifier("block/better_grass_snowed"));
-        event.register(Helpers.identifier("block/better_mycelium"));
+        event.register(Helpers.standalone("block/better_grass"));
+        event.register(Helpers.standalone("block/better_grass_snowed"));
+        event.register(Helpers.standalone("block/better_mycelium"));
     }
 }

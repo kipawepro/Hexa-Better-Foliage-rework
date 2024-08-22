@@ -20,12 +20,11 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.eventbus.api.IEventBus;
 
 import com.eerussianguy.betterfoliage.particle.LeafParticle;
 import com.eerussianguy.betterfoliage.particle.SoulParticle;
+import net.neoforged.neoforge.client.event.ClientTickEvent;
+import net.neoforged.neoforge.common.NeoForge;
 
 public class ForgeEventHandler
 {
@@ -33,7 +32,7 @@ public class ForgeEventHandler
 
     public static void init()
     {
-        final IEventBus bus = MinecraftForge.EVENT_BUS;
+        final var bus = NeoForge.EVENT_BUS;
 
         bus.addListener(ForgeEventHandler::onClientTick);
     }
@@ -43,7 +42,7 @@ public class ForgeEventHandler
         SPRITE_CACHE.clear();
     }
 
-    private static void onClientTick(TickEvent.ClientTickEvent event)
+    private static void onClientTick(ClientTickEvent.Post event)
     {
         Minecraft mc = Minecraft.getInstance();
         if (mc.isPaused()) return;
@@ -61,7 +60,7 @@ public class ForgeEventHandler
 
         // stupid hack
         // noinspection deprecation
-        final AbstractTexture particleTexture = Minecraft.getInstance().textureManager.getTexture(TextureAtlas.LOCATION_PARTICLES);
+        final AbstractTexture particleTexture = Minecraft.getInstance().getTextureManager().getTexture(TextureAtlas.LOCATION_PARTICLES);
         particleTexture.setFilter(false, false);
         if (particleTexture instanceof TextureAtlas atlas)
         {
