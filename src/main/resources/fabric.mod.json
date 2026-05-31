@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "id": "hexa-betterfoliage",
+  "version": "${version}",
+  "name": "Better Foliage",
+  "description": "Better Foliage port, reworked by hexa-mc.",
+  "authors": [
+    "hexa-mc"
+  ],
+  "contact": {
+    "homepage": "https://github.com/kipawepro/Hexa-Better-Foliage-rework",
+    "issues": "https://github.com/kipawepro/Hexa-Better-Foliage-rework/issues"
+  },
+  "license": "MIT",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "com.eerussianguy.betterfoliage.BetterFoliageClient"
+    ]
+  },
+  "mixins": [],
+  "depends": {
+    "fabricloader": ">=0.19.2",
+    "fabric-api": "*",
+    "minecraft": "~26.1"
+  },
+  "suggests": {
+    "tfc": "*",
+    "biomesoplenty": "*",
+    "quark": "*",
+    "atmospheric": "*"
+  }
+}

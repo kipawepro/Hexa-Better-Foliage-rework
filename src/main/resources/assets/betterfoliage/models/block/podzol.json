@@ -1,6 +1,6 @@
 {
   "__comment__": "This file was automatically created by mcresources",
-  "loader": "betterfoliage:grass",
+  "fabric:type": "betterfoliage:grass",
   "dirt": "minecraft:block/dirt",
   "top": "minecraft:block/podzol_top",
   "overlay": "minecraft:block/podzol_side",

@@ -1,6 +1,6 @@
 {
   "__comment__": "This file was automatically created by mcresources",
-  "loader": "betterfoliage:leaves",
+  "fabric:type": "betterfoliage:leaves",
   "leaves": "atmospheric:block/grimwood_leaves",
   "fluff": "betterfoliage:block/grimwood_fluff"
 }
